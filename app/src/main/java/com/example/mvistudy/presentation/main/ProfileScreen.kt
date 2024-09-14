@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -36,16 +37,25 @@ fun ProfileRoute(
 
     val context = LocalContext.current
 
-    if (sideEffect is ProfileSidEffect.ServerError) {
-        Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
-    }
-
     ProfileScreen(
         onChangeUsername = profileViewModel::changeUsername,
         onChangeGender = {},
         onChangeIntroduce = profileViewModel::changeIntroduce,
         profileState = state
     )
+
+    LaunchedEffect(key1 = sideEffect) {
+        when (sideEffect) {
+            ProfileSidEffect.Init -> {}
+            is ProfileSidEffect.ServerError -> {
+                Toast.makeText(context, "Server error", Toast.LENGTH_SHORT).show()
+            }
+
+            ProfileSidEffect.StorageError -> {
+                Toast.makeText(context, "Storage error", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }
 
 @Composable
